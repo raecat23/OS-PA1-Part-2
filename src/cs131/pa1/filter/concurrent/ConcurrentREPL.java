@@ -6,7 +6,14 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ConcurrentREPL {
-
+	/* THINGS TO DO
+	*  Add method to switch to next thing in queue to call at the end of all the loops
+	*  (this will take the head(via take) and add it at the end if it isn't "done")
+	
+	*  In each command make sure we have isDone reflect if it's actually done
+	
+	*  Have each command check at the end of each loop to see if there are other thing that needs to run a loop
+	*/
 	static String currentWorkingDirectory;
 	static LinkedBlockingQueue<ConcurrentFilter> processes;
 	
