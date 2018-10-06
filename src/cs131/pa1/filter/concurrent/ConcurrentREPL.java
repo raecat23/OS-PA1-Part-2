@@ -2,6 +2,7 @@ package cs131.pa1.filter.concurrent;
 
 import cs131.pa1.filter.Message;
 import java.util.Scanner;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ConcurrentREPL {
 
@@ -20,15 +21,17 @@ public class ConcurrentREPL {
 	
 	public static void main(String[] args){
 		currentWorkingDirectory = System.getProperty("user.dir");
+		processes = new LinkedBlockingQueue<>();
 		Scanner s = new Scanner(System.in);
 		System.out.print(Message.WELCOME);
 		String command;
-		while(true) {
+		boolean exit = false;
+		while(!exit) {
 			//obtaining the command from the user
 			System.out.print(Message.NEWCOMMAND);
 			command = s.nextLine();
 			if(command.equals("exit")) {
-				break;
+				exit = true;
 			} else if(!command.trim().equals("")) {
 				//building the filters list from the command
 				ConcurrentFilter filterlist = ConcurrentCommandBuilder.createFiltersFromCommand(command);
@@ -43,7 +46,7 @@ public class ConcurrentREPL {
 	}
 public static void moveProcess(ConcurrentFilter f){
 	if(!f.isDone()){
-		processes.offer();
+		processes.offer(f);
 	}
 }
 

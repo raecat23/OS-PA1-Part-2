@@ -9,6 +9,7 @@ import cs131.pa1.filter.Message;
 public class ConcurrentCommandBuilder {
 	
 	public static ConcurrentFilter createFiltersFromCommand(String command){
+		
 		//initialize the list that will hold all of the filters
 				List<ConcurrentFilter> filters = new LinkedList<ConcurrentFilter>();
 				//adding whitespace so that string splitting doesn't bug
@@ -16,6 +17,13 @@ public class ConcurrentCommandBuilder {
 				//removing the final filter here
 				String truncCommand = adjustCommandToRemoveFinalFilter(command);
 				if(truncCommand == null) {
+					
+					/**SHOULD HAVE A REQUIRES INPUT MESSAGE FOR >*
+					 * ALSO, MIGHT WANT TO CHANGE THE NAME OF FINAL 
+					 * FILTER CLASS THING; YOU'RE USING IT ONLY WITH
+					 * REDIRECT SO NAMES SHOULD REFLECT THAT FOR 
+					 * CLARITY*/
+					
 					return null;
 				}
 				//for all the commands, split them by pipes, construct each filter, and add them to the filters list.
@@ -57,21 +65,22 @@ public class ConcurrentCommandBuilder {
 	
 	private static String adjustCommandToRemoveFinalFilter(String command){
 		String[] removeRedir = command.split(">");
+		
 		//checking for error cases here. If there is a redirection...
 		if(removeRedir.length > 1) {
 			//if the redirection does not have an input, then output an error
 			if(removeRedir[0].trim().equals("")) {
-				System.out.printf(Message.REQUIRES_INPUT.toString(), (">" + removeRedir[1]).trim());
+				System.out.print(Message.REQUIRES_INPUT.with_parameter(command.trim())); 
 				return null;
 			}
 			//if redirection is attempted to be piped, output an error
 			if(removeRedir[1].contains("|")) {
-				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), ">" + removeRedir[1].substring(0, removeRedir[1].indexOf("|")));
+				System.out.print(Message.CANNOT_HAVE_OUTPUT.with_parameter("> " + removeRedir[1].substring(0, removeRedir[1].indexOf("|"))));
 				return null;
 			}
 			//if multiple redirections are in the command, output an error
 			if(removeRedir.length > 2) {
-				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), removeRedir[1].trim());
+				System.out.print(Message.CANNOT_HAVE_OUTPUT.with_parameter("> "+removeRedir[1].trim()));
 				return null;
 			}
 		}
@@ -81,6 +90,9 @@ public class ConcurrentCommandBuilder {
 	private static ConcurrentFilter constructFilterFromSubCommand(String subCommand){
 		String[] commandextract = subCommand.split(" ");
 		ConcurrentFilter filter;
+		
+		/** NEED TO MAKE SURE THAT COMMANDS THAT SHOULDN'T HAVE PARAMETERS DON'T HAVE THEM */
+		
 		try {
 			switch (commandextract[0]) {
 				case "cat":
@@ -105,7 +117,7 @@ public class ConcurrentCommandBuilder {
 					filter = new UniqFilter();
 					break;
 				default:
-					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCommand);
+					System.out.print(Message.COMMAND_NOT_FOUND.with_parameter(subCommand));
 					return null;
 			}
 		} catch (Exception e) {
@@ -120,6 +132,8 @@ public class ConcurrentCommandBuilder {
 		ConcurrentFilter curr = iter.next();
 		String[] cmdlist = command.split("\\|");	//command is brought in so we can output proper error messages
 		int cmdindex = 0;
+		
+		/** > CAN BE CHECKED HERE TOO*/
 		
 		//check to make sure grep and wc are not the first filters
 		if(curr instanceof GrepFilter || curr instanceof WcFilter) {
