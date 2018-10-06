@@ -1,11 +1,14 @@
 package cs131.pa1.filter.concurrent;
 
 import cs131.pa1.filter.Message;
-
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Scanner;
 
 public class ConcurrentREPL {
+
+	static String currentWorkingDirectory;
+	static LinkedBlockingQueue<ConcurrentFilter> processes;
+	
+	
 	/* THINGS TO DO
 	*  Add method to switch to next thing in queue to call at the end of all the loops
 	*  (this will take the head(via take) and add it at the end if it isn't "done")
@@ -14,13 +17,9 @@ public class ConcurrentREPL {
 	
 	*  Have each command check at the end of each loop to see if there are other thing that needs to run a loop
 	*/
-	static String currentWorkingDirectory;
-	static LinkedBlockingQueue<ConcurrentFilter> processes;
 	
 	public static void main(String[] args){
 		currentWorkingDirectory = System.getProperty("user.dir");
-		processes = new LinkedBlockingQueue<>();
-		
 		Scanner s = new Scanner(System.in);
 		System.out.print(Message.WELCOME);
 		String command;
@@ -42,5 +41,11 @@ public class ConcurrentREPL {
 		s.close();
 		System.out.print(Message.GOODBYE);
 	}
+public static void moveProcess(ConcurrentFilter f){
+	if(!f.isDone()){
+		processes.offer();
+	}
+}
+
 
 }

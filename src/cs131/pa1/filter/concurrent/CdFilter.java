@@ -39,6 +39,9 @@ public class CdFilter extends ConcurrentFilter {
 	
 	public String processLine(String line) {
 		ConcurrentREPL.currentWorkingDirectory = dirToSet;
+		if(!isDone()){
+			//move to the next process
+		}
 		return null;
 	}
 }

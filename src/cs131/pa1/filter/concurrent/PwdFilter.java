@@ -10,6 +10,9 @@ public class PwdFilter extends ConcurrentFilter {
 	}
 	
 	public String processLine(String line) {
+		if(!isDone()){
+			//move to the next process
+		}
 		return ConcurrentREPL.currentWorkingDirectory;
 	}
 }

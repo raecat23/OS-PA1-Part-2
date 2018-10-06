@@ -35,6 +35,9 @@ public class WcFilter extends ConcurrentFilter {
 			wordcount += wct.length;
 			String[] cct = line.split("|");
 			charcount += cct.length;
+			if(!isDone()){
+				//move to the next process
+			}
 			return null;
 		}
 	}

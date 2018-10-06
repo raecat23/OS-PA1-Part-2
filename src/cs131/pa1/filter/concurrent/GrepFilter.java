@@ -18,8 +18,15 @@ public class GrepFilter extends ConcurrentFilter {
 	
 	public String processLine(String line) {
 		if(line.contains(toFind)) {
+			if(!isDone()){
+				//move to the next process
+			}
 			return line;
+			
 		} else {
+			if(!isDone()){
+				//move to the next process
+			}
 			return null;
 		}
 	}

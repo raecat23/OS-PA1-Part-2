@@ -22,6 +22,9 @@ public class LsFilter extends ConcurrentFilter{
 	
 	@Override
 	public String processLine(String line) {
+		if(!isDone()){
+			//move to the next process
+		}
 		return flist[counter++].getName();
 	}
 }
