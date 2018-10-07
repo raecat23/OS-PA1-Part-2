@@ -34,21 +34,22 @@ public class ConcurrentREPL {
 				exit = true;
 			} else if(!command.trim().equals("")) {
 				//building the filters list from the command
-				ConcurrentFilter filterlist = ConcurrentCommandBuilder.createFiltersFromCommand(command);
-				while(filterlist != null) {
-					filterlist.process();
-					filterlist = (ConcurrentFilter) filterlist.getNext();
+				if(ConcurrentCommandBuilder.createFiltersFromCommand(command)) {
+					processes.poll().process();
 				}
+				
 			}
 		}
 		s.close();
 		System.out.print(Message.GOODBYE);
 	}
-public static void moveProcess(ConcurrentFilter f){
-	if(!f.isDone()){
-		processes.offer(f);
+	
+	public static void moveProcess(ConcurrentFilter f){
+		if(!f.isDone()) {
+			processes.offer(f);
+		}
+		processes.poll().process();
 	}
-}
 
 
 }

@@ -3,52 +3,46 @@ package cs131.pa1.filter.concurrent;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import cs131.pa1.filter.Message;
 
 public class ConcurrentCommandBuilder {
 	
-	public static ConcurrentFilter createFiltersFromCommand(String command){
+	public static boolean createFiltersFromCommand(String command) {
+		//adding whitespace so that string splitting doesn't bug
+		command = " " + command + " ";
+		//removing the final filter here
+		String truncCommand = adjustCommandToRemoveFinalFilter(command);
+		if(truncCommand == null) {
+			return false;
+		}
+		//for all the commands, split them by pipes, construct each filter, and add them to the filters list.
+		String[] commands = truncCommand.split("\\|");
+				
+		for(int i = 0; i < commands.length; i++) {
+			ConcurrentFilter filter = constructFilterFromSubCommand(commands[i].trim());
+					
+			if(filter != null) {
+				ConcurrentREPL.processes.offer(filter);
+			} else {
+				return false;
+			}
+		}
 		
-		//initialize the list that will hold all of the filters
-				List<ConcurrentFilter> filters = new LinkedList<ConcurrentFilter>();
-				//adding whitespace so that string splitting doesn't bug
-				command = " " + command + " ";
-				//removing the final filter here
-				String truncCommand = adjustCommandToRemoveFinalFilter(command);
-				if(truncCommand == null) {
-					
-					/**SHOULD HAVE A REQUIRES INPUT MESSAGE FOR >*
-					 * ALSO, MIGHT WANT TO CHANGE THE NAME OF FINAL 
-					 * FILTER CLASS THING; YOU'RE USING IT ONLY WITH
-					 * REDIRECT SO NAMES SHOULD REFLECT THAT FOR 
-					 * CLARITY*/
-					
-					return null;
-				}
-				//for all the commands, split them by pipes, construct each filter, and add them to the filters list.
-				String[] commands = truncCommand.split("\\|");
-				for(int i = 0; i < commands.length; i++) {
-					ConcurrentFilter filter = constructFilterFromSubCommand(commands[i].trim());
-					if(filter != null) {
-						filters.add(filter);
-					} else {
-						return null;
-					}
-				}
-				
-				ConcurrentFilter fin = determineFinalFilter(command);
-				if(fin == null) {
-					return null;
-				}
-				filters.add(fin);
-				
-				if(linkFilters(filters, command) == true){
-					return filters.get(0);
-				} else {
-					return null;
-				}
+		ConcurrentFilter fin = determineFinalFilter(command);
+		if(fin == null) {
+			return false;
+		}
+		ConcurrentREPL.processes.offer(fin);
+		
+		if(linkFilters(ConcurrentREPL.processes, command) == true && !ConcurrentREPL.processes.isEmpty()){
+			return true;
+		} else {
+			return false;
+		}
 	}
+		
 	
 	private static ConcurrentFilter determineFinalFilter(String command){
 		String[] redir = command.split(">");
@@ -90,9 +84,7 @@ public class ConcurrentCommandBuilder {
 	private static ConcurrentFilter constructFilterFromSubCommand(String subCommand){
 		String[] commandextract = subCommand.split(" ");
 		ConcurrentFilter filter;
-		
-		/** NEED TO MAKE SURE THAT COMMANDS THAT SHOULDN'T HAVE PARAMETERS DON'T HAVE THEM */
-		
+				
 		try {
 			switch (commandextract[0]) {
 				case "cat":
@@ -126,15 +118,13 @@ public class ConcurrentCommandBuilder {
 		return filter;
 	}
 
-	private static boolean linkFilters(List<ConcurrentFilter> filters, String command){
+	private static boolean linkFilters(LinkedBlockingQueue<ConcurrentFilter> filters, String command){
 		Iterator<ConcurrentFilter> iter = filters.iterator();
 		ConcurrentFilter prev;
 		ConcurrentFilter curr = iter.next();
 		String[] cmdlist = command.split("\\|");	//command is brought in so we can output proper error messages
 		int cmdindex = 0;
-		
-		/** > CAN BE CHECKED HERE TOO*/
-		
+				
 		//check to make sure grep and wc are not the first filters
 		if(curr instanceof GrepFilter || curr instanceof WcFilter) {
 			System.out.printf(Message.REQUIRES_INPUT.toString(),cmdlist[cmdindex].trim());
