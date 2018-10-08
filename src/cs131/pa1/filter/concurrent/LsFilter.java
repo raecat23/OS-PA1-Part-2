@@ -6,8 +6,10 @@ public class LsFilter extends ConcurrentFilter{
 	File folder;
 	File[] flist;
 	private boolean isDone;
+	
 	public LsFilter() {
 		super();
+		isDone = false;
 		counter = 0;
 		folder = new File(ConcurrentREPL.currentWorkingDirectory);
 		flist = folder.listFiles();
@@ -15,7 +17,7 @@ public class LsFilter extends ConcurrentFilter{
 	
 	@Override
 	public void process() {
-		while(counter < flist.length && isDone() == false) {
+		while(counter < flist.length && !isDone()) {
 			output.add(processLine(""));
 		}
 	}
@@ -24,7 +26,8 @@ public class LsFilter extends ConcurrentFilter{
 	public String processLine(String line) {
 		return flist[counter++].getName();
 	}
-	public void isDone(){
-		return isDone
+	
+	public boolean isDone(){
+		return isDone;
 	}
 }

@@ -8,6 +8,7 @@ import cs131.pa1.filter.Message;
 public class CdFilter extends ConcurrentFilter {
 	private String dirToSet;
 	private boolean isDone;
+	
 	public CdFilter(String line) throws Exception {
 		super();
 		dirToSet = ConcurrentREPL.currentWorkingDirectory;
