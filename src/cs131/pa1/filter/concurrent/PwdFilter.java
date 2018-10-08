@@ -10,11 +10,11 @@ public class PwdFilter extends ConcurrentFilter {
 	
 	public void process() {
 		output.add(processLine(""));
+		isDone = true;
 		ConcurrentREPL.moveProcess(this);
 	}
 	
 	public String processLine(String line) {
-		isDone = true;
 		return ConcurrentREPL.currentWorkingDirectory;
 	}
 	
