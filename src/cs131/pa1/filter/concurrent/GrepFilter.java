@@ -8,7 +8,6 @@ public class GrepFilter extends ConcurrentFilter {
 	
 	public GrepFilter(String line) throws Exception {
 		super();
-		
 		isDone = false;
 		String[] param = line.split(" ");
 		if(param.length > 1) {
@@ -20,7 +19,7 @@ public class GrepFilter extends ConcurrentFilter {
 	}
 	
 	public void process(){
-		if(!this.prev.isDone() && isDone() == false){
+		if(!this.input.isEmpty() && isDone() == false){
 			String line = input.poll();
 			String processedLine = processLine(line);
 			if (processedLine != null){
@@ -42,5 +41,9 @@ public class GrepFilter extends ConcurrentFilter {
 	
 	public boolean isDone(){
 		return isDone;
+	}
+	
+	public String toString() {
+		return "grep "+toFind;
 	}
 }

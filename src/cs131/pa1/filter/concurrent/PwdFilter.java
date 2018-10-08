@@ -22,4 +22,8 @@ public class PwdFilter extends ConcurrentFilter {
 		return isDone;
 	}
 	
+	public String toString() {
+		return "pwd";
+	}
+	
 }

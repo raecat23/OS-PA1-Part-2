@@ -9,6 +9,7 @@ import cs131.pa1.filter.Message;
 public class CatFilter extends ConcurrentFilter{
 	private Scanner reader;
 	public boolean isDone;
+	private String fileName;
 	
 	public CatFilter(String line) throws Exception {
 		super();
@@ -16,21 +17,20 @@ public class CatFilter extends ConcurrentFilter{
 		
 		//parsing the cat options
 		String[] args = line.split(" ");
-		String filename;
 		//obviously incorrect number of parameters
 		if(args.length == 1) {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), line);
 			throw new Exception();
 		} else {
 			try {
-				filename = args[1];
+				fileName = args[1];
 			} catch (Exception e) {
 				System.out.printf(Message.REQUIRES_PARAMETER.toString(), line);
 				throw new Exception();
 			}
 		}
 		try {
-			reader = new Scanner(new File(filename));
+			reader = new Scanner(new File(fileName));
 		} catch (FileNotFoundException e) {
 			System.out.printf(Message.FILE_NOT_FOUND.toString(), line);
 			throw new FileNotFoundException();
@@ -61,5 +61,9 @@ public class CatFilter extends ConcurrentFilter{
 	
 	public boolean isDone() {
 		return isDone;
+	}
+	
+	public String toString() {
+		return "cat "+fileName;
 	}
 }

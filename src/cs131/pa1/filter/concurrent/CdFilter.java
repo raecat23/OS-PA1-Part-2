@@ -49,4 +49,8 @@ public class CdFilter extends ConcurrentFilter {
 	public boolean isDone(){
 		return isDone;
 	}
+	
+	public String toString() {
+		return "cd "+dirToSet;
+	}
 }
