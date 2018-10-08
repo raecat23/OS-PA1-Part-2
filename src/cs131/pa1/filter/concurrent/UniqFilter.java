@@ -11,13 +11,14 @@ public class UniqFilter extends ConcurrentFilter{
 	}
 
 	public void process(){
-		while (!input.isEmpty() && isDone() == false){
+		if(!input.isEmpty() && isDone() == false){
 			String line = input.poll();
 			String processedLine = processLine(line);
 			if (processedLine != null){
 				output.add(processedLine);
 			}
-		}	
+		}
+		ConcurrentREPL.moveProcess(this);
 	}
 	public String processLine(String line) {
 		if(existingStringSet.contains(line)) {

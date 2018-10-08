@@ -38,6 +38,7 @@ public class CdFilter extends ConcurrentFilter {
 		if(!isDone()){
 			processLine("");
 		}
+		ConcurrentREPL.moveProcess(this);
 	}
 	
 	public String processLine(String line) {

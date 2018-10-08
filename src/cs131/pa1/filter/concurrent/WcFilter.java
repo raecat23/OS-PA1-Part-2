@@ -13,8 +13,15 @@ public class WcFilter extends ConcurrentFilter {
 		if(isDone()) {
 			output.add(processLine(null));
 		} else {
-			super.process();
+			if(!input.isEmpty()){
+				String line = input.poll();
+				String processedLine = processLine(line);
+				if (processedLine != null){
+					output.add(processedLine);
+				}
+			}	
 		}
+		ConcurrentREPL.moveProcess(this);
 	}
 	
 	public String processLine(String line) {
@@ -40,5 +47,7 @@ public class WcFilter extends ConcurrentFilter {
 			}
 			return null;
 		}
+		
 	}
+	
 }
