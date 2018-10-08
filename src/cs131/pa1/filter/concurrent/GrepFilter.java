@@ -4,7 +4,7 @@ import cs131.pa1.filter.Message;
 
 public class GrepFilter extends ConcurrentFilter {
 	private String toFind;
-	
+	private boolean isDone;
 	public GrepFilter(String line) throws Exception {
 		super();
 		String[] param = line.split(" ");
@@ -16,18 +16,23 @@ public class GrepFilter extends ConcurrentFilter {
 		}
 	}
 	
+	public void process(){
+		while (!input.isEmpty() && isDone() == false){
+			String line = input.poll();
+			String processedLine = processLine(line);
+			if (processedLine != null){
+				output.add(processedLine);
+			}
+		}	
+	}
 	public String processLine(String line) {
 		if(line.contains(toFind)) {
-			if(!isDone()){
-				//move to the next process
-			}
-			return line;
-			
-		} else {
-			if(!isDone()){
-				//move to the next process
-			}
-			return null;
+				return line;
+			} else {
+				return null;
 		}
+	}
+	public boolean isDone(){
+		return isDone;
 	}
 }

@@ -8,7 +8,7 @@ import cs131.pa1.filter.Message;
 
 public class CatFilter extends ConcurrentFilter{
 	private Scanner reader;
-	
+	public boolean isDone;
 	public CatFilter(String line) throws Exception {
 		super();
 		
@@ -36,21 +36,27 @@ public class CatFilter extends ConcurrentFilter{
 	}
 
 	public void process() {
-		while(reader.hasNext()) {
+		while(reader.hasNext() && isDone() == false) {
 			String processedLine = processLine("");
 			if(processedLine == null) {
 				break;
 			}
 			output.add(processedLine);
+		
 		}
 		reader.close();
 	}
 
 	public String processLine(String line) {
 		if(reader.hasNextLine()) {
+			isDone = true;
 			return reader.nextLine();
 		} else {
 			return null;
 		}
+	}
+	
+	public boolean isDone(){
+		return isDone;
 	}
 }

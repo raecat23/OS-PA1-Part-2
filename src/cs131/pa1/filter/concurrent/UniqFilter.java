@@ -5,24 +5,29 @@ import java.util.HashSet;
 public class UniqFilter extends ConcurrentFilter{
 	private HashSet<String> existingStringSet;
 	//This set will record what strings are existing
-	
+	private boolean isDone;
 	public UniqFilter () throws Exception {
 		existingStringSet = new HashSet<String> ();
 	}
 
-	
+	public void process(){
+		while (!input.isEmpty() && isDone() == false){
+			String line = input.poll();
+			String processedLine = processLine(line);
+			if (processedLine != null){
+				output.add(processedLine);
+			}
+		}	
+	}
 	public String processLine(String line) {
 		if(existingStringSet.contains(line)) {
-			if(!isDone()){
-				//move to the next process
-			}
 			return null;
 		}else {
 			existingStringSet.add(line);
-			if(!isDone()){
-				//move to the next process
-			}
 			return line;
 		}
+	}
+	public boolean isDone(){
+		return isDone;
 	}
 }
