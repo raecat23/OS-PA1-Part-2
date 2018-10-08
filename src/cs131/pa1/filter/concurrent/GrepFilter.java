@@ -5,8 +5,11 @@ import cs131.pa1.filter.Message;
 public class GrepFilter extends ConcurrentFilter {
 	private String toFind;
 	private boolean isDone;
+	
 	public GrepFilter(String line) throws Exception {
 		super();
+		
+		isDone = false;
 		String[] param = line.split(" ");
 		if(param.length > 1) {
 			toFind = param[1];
@@ -17,14 +20,18 @@ public class GrepFilter extends ConcurrentFilter {
 	}
 	
 	public void process(){
-		while (!input.isEmpty() && isDone() == false){
+		if(!this.prev.isDone() && isDone() == false){
 			String line = input.poll();
 			String processedLine = processLine(line);
 			if (processedLine != null){
 				output.add(processedLine);
 			}
-		}	
+		}else {
+			isDone = true;
+		}
+		ConcurrentREPL.moveProcess(this);
 	}
+	
 	public String processLine(String line) {
 		if(line.contains(toFind)) {
 				return line;
@@ -32,6 +39,7 @@ public class GrepFilter extends ConcurrentFilter {
 				return null;
 		}
 	}
+	
 	public boolean isDone(){
 		return isDone;
 	}
