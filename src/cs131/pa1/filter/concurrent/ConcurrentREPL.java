@@ -26,20 +26,27 @@ public class ConcurrentREPL {
 			if(command.equals("exit")) {
 				exit = true;
 			} else if(!command.trim().equals("")) {
+				String[] temp = command.split(" ");
+				
 				if(withBG(command)) {
-					String[] temp = command.split(" ");
-					if(command.equals("repl_jobs")) {
+					if(temp[0].equals("repl_jobs")) {
 						replJobs();
 					}else if(temp[0].equals("kill")) {
-						kill(Integer.parseInt(temp[1]));
+						kill(command);
 					}else {
 						if(ConcurrentCommandBuilder.createFiltersFromCommand(command.trim().substring(0, command.length()-1), jobs)) {
 							jobs++;
 						}
 					}	
 				}else {
-					if(ConcurrentCommandBuilder.createFiltersFromCommand(command, jobs)) {
-						jobs++;
+					if(temp[0].equals("repl_jobs")) {
+						replJobs();
+					}else if(temp[0].equals("kill")) {
+						kill(command);
+					}else {
+						if(ConcurrentCommandBuilder.createFiltersFromCommand(command, jobs)) {
+							jobs++;
+						}
 					}
 				}
 				
@@ -60,7 +67,7 @@ public class ConcurrentREPL {
 		return false;
 	}
 	
-	private static void replJobs() {
+	public static void replJobs() {
 		List<ConcurrentFilter> temp = processes;
 		for(int i = 0; i < jobs; i++) {//Starts the new line for each "job" list 
 			System.out.print(i+1 + ". ");
@@ -84,18 +91,17 @@ public class ConcurrentREPL {
 		}
 	}
 	
-	private static void kill(int kill) {
+	public static void kill(String killCmd) {
+		String[] temp = killCmd.split(" ");
+		int kill = Integer.parseInt(temp[1]);
 		kill--;
 		if(kill <= jobs) {
 			for(ConcurrentFilter curr : processes) {
 				if(curr.jobNum == kill) {
 					curr.setDone();
 					processes.remove(curr);
-				}else if(curr.jobNum > kill) {
-					curr.jobNum--;
 				}
-			}
-			jobs--;			
+			}	
 		}else {
 			System.out.printf(Message.INVALID_PARAMETER.toString(), "kill "+kill);
 		}

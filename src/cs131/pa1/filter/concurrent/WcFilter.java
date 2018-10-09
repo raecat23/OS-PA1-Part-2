@@ -10,6 +10,9 @@ public class WcFilter extends ConcurrentFilter {
 	}
 	
 	public void process() {
+		if(this.prev.isDone() && this.input.isEmpty()) {
+			output.offer(processLine(null));
+		}
 		while (!this.prev.isDone() || !this.input.isEmpty() ){
 			String line;
 			try {
