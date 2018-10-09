@@ -4,25 +4,13 @@ public class WcFilter extends ConcurrentFilter {
 	private int linecount;
 	private int wordcount;
 	private int charcount;
-	private boolean isDone;
 	
 	public WcFilter() {
 		super();
-		isDone = false;
 	}
 	
 	public void process() {
-		if(!input.isEmpty()){
-			String line = input.poll();
-			String processedLine = processLine(line);
-			if (processedLine != null){
-				output.add(processedLine);
-				//isDone = true;
-			}
-		}else {
-			output.add(processLine(null));
-		}
-		ConcurrentREPL.moveProcess(this);
+		super.process();
 	}
 	
 	public String processLine(String line) {
@@ -48,10 +36,6 @@ public class WcFilter extends ConcurrentFilter {
 			return null;
 		}
 		
-	}
-	
-	public boolean isDone() {
-		return isDone;
 	}
 	
 	public String toString() {

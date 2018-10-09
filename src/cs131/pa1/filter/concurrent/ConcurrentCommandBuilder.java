@@ -27,27 +27,18 @@ public class ConcurrentCommandBuilder {
 			ConcurrentFilter filter = constructFilterFromSubCommand(commands[i].trim());
 					
 			if(filter != null) {
-				//Adds to it's individual job list as well as the overall queue
 				job.add(filter);
-				ConcurrentREPL.processes.offer(filter);
-			} else {
-				if(commands[i].substring(0, 3).equals("kill")){
-					ConcurrentREPL.processes.remove((commands[i].substring(4)));
-					
-				}
-				return false;
-			}
+			} 
 		}
 		
 		ConcurrentFilter fin = determineFinalFilter(command);
 		if(fin == null) {
 			return false;
 		}
-		//Adds to it's individual job list as well as the overall queue
+
 		job.add(fin);
-		ConcurrentREPL.processes.offer(fin);
 		
-		if(linkFilters(job, command) == true && !ConcurrentREPL.processes.isEmpty()){
+		if(linkFilters(job, command) == true ){
 			ConcurrentREPL.jobs.add(job);
 			//Adds job list to the array of job lists that are currently running
 			return true;
@@ -60,7 +51,6 @@ public class ConcurrentCommandBuilder {
 	private static ConcurrentFilter determineFinalFilter(String command){
 		
 		String[] redir = command.split(">");
-		//String[] redir2 = command.split("&");
 		if(redir.length == 1) {
 			return new PrintFilter();
 		}
@@ -71,10 +61,6 @@ public class ConcurrentCommandBuilder {
 				return null;
 			}
 		}
-		//if(redir2.length == 1){
-			//there's something to do here;
-		//}
-		//return null;
 	}
 	
 	private static String adjustCommandToRemoveFinalFilter(String command){

@@ -34,28 +34,15 @@ public class ConcurrentREPL {
 						kill(Integer.parseInt(temp[1]));
 					}else {
 						ConcurrentCommandBuilder.createFiltersFromCommand(command.trim().substring(0, command.length()-1));
-						//Didn't run the processes here since it wouldn't stop for a new command; the last command to be typed that doesn't have an & will 
-						//begin the processing 
-					}
+					}	
 				}else {
-					//building the filters list from the command
-					if(ConcurrentCommandBuilder.createFiltersFromCommand(command)) {
-						processes.poll().process();
-					}		
+					ConcurrentCommandBuilder.createFiltersFromCommand(command);
 				}
+				
 			}
 		}
 		s.close();
 		System.out.print(Message.GOODBYE);
-	}
-	
-	public static void moveProcess(ConcurrentFilter f){
-		if(!f.isDone()) {
-			processes.offer(f);//Adds it to the end of the commands again if it still needs to finish
-		}
-		if(!processes.isEmpty()) {
-			processes.poll().process();//makes sure there are more commands and if there are starts the next burst for the next one
-		}
 	}
 	
 	/**

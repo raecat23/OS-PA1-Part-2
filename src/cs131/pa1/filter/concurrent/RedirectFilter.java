@@ -10,15 +10,11 @@ import cs131.pa1.filter.Message;
 public class RedirectFilter extends ConcurrentFilter {
 	private FileWriter fw;
 	private String line;
-	private boolean isDone;
 	
 	public RedirectFilter(String line) throws Exception {
 		super();
-		isDone = false;
 		String[] param = line.split(">");
-	//	for(int i = 0; i<param.length; i++){
-		//	System.out.println(param[i]);
-		//}
+		
 		if(param.length > 1) {
 			if(param[1].trim().equals("")) {
 				System.out.printf(Message.REQUIRES_PARAMETER.toString(), line.trim());
@@ -38,17 +34,14 @@ public class RedirectFilter extends ConcurrentFilter {
 	}
 	
 	public void process() {
-		if(!this.input.isEmpty()) {
-			processLine(input.poll());
-		}else {
+		super.process();
+		try {
+			fw.close();
 			isDone = true;
-			try {
-				fw.close();
-			} catch (IOException e) {
-				System.out.printf(Message.FILE_NOT_FOUND.toString(), line);
-			}
+		} catch (IOException e) {
+			System.out.printf(Message.FILE_NOT_FOUND.toString(), line);
 		}
-		ConcurrentREPL.moveProcess(this);
+		
 	}
 	
 	public String processLine(String line) {
@@ -63,18 +56,9 @@ public class RedirectFilter extends ConcurrentFilter {
 		}
 		return null;
 	}
-	
-	public boolean isDone() {
-		return isDone;
-	}
-	
+		
 	public String toString() {
 		return "> "+line; 
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
 }

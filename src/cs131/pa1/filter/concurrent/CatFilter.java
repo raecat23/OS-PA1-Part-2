@@ -8,12 +8,10 @@ import cs131.pa1.filter.Message;
 
 public class CatFilter extends ConcurrentFilter{
 	private Scanner reader;
-	public boolean isDone;
 	private String fileName;
 	
 	public CatFilter(String line) throws Exception {
 		super();
-		isDone = false;
 		
 		//parsing the cat options
 		String[] args = line.split(" ");
@@ -38,17 +36,16 @@ public class CatFilter extends ConcurrentFilter{
 	}
 
 	public void process() {
-		if(reader.hasNext() && isDone() == false) {
+		if(reader.hasNext() && !isDone()) {
 			String processedLine = processLine("");
 			if(processedLine != null) {
-				output.add(processedLine);
+				output.offer(processedLine);
 			}
 		
 		}else {
 			reader.close();
 			isDone = true;
 		}
-		ConcurrentREPL.moveProcess(this);
 	}
 
 	public String processLine(String line) {
@@ -58,18 +55,8 @@ public class CatFilter extends ConcurrentFilter{
 			return null;
 		}
 	}
-	
-	public boolean isDone() {
-		return isDone;
-	}
-	
+		
 	public String toString() {
 		return "cat "+fileName;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
 	}
 }
