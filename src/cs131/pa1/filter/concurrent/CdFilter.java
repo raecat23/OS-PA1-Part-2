@@ -5,7 +5,7 @@ import java.io.File;
 import cs131.pa1.filter.Filter;
 import cs131.pa1.filter.Message;
 
-public class CdFilter extends ConcurrentFilter {
+public class CdFilter extends ConcurrentFilter{
 	private String dirToSet;
 	private boolean isDone;
 	
@@ -52,5 +52,11 @@ public class CdFilter extends ConcurrentFilter {
 	
 	public String toString() {
 		return "cd "+dirToSet;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 }

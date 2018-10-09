@@ -17,10 +17,9 @@ public class WcFilter extends ConcurrentFilter {
 			String processedLine = processLine(line);
 			if (processedLine != null){
 				output.add(processedLine);
-				isDone = true;
+				//isDone = true;
 			}
 		}else {
-			isDone = true;
 			output.add(processLine(null));
 		}
 		ConcurrentREPL.moveProcess(this);
@@ -29,7 +28,9 @@ public class WcFilter extends ConcurrentFilter {
 	public String processLine(String line) {
 		//prints current result if ever passed a null
 		if(line == null) {
+			isDone = true;
 			return linecount + " " + wordcount + " " + charcount;
+			
 		}
 		
 		if(isDone()) {

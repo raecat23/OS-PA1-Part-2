@@ -16,6 +16,9 @@ public class RedirectFilter extends ConcurrentFilter {
 		super();
 		isDone = false;
 		String[] param = line.split(">");
+	//	for(int i = 0; i<param.length; i++){
+		//	System.out.println(param[i]);
+		//}
 		if(param.length > 1) {
 			if(param[1].trim().equals("")) {
 				System.out.printf(Message.REQUIRES_PARAMETER.toString(), line.trim());
@@ -39,6 +42,11 @@ public class RedirectFilter extends ConcurrentFilter {
 			processLine(input.poll());
 		}else {
 			isDone = true;
+			try {
+				fw.close();
+			} catch (IOException e) {
+				System.out.printf(Message.FILE_NOT_FOUND.toString(), line);
+			}
 		}
 		ConcurrentREPL.moveProcess(this);
 	}
@@ -62,5 +70,11 @@ public class RedirectFilter extends ConcurrentFilter {
 	
 	public String toString() {
 		return "> "+line; 
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 }

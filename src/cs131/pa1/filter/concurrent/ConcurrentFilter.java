@@ -5,7 +5,7 @@ import java.util.Queue;
 import cs131.pa1.filter.Filter;
 
 
-public abstract class ConcurrentFilter extends Filter {
+public abstract class ConcurrentFilter extends Filter implements Runnable{
 	
 	protected Queue<String> input;
 	protected Queue<String> output;
@@ -35,7 +35,7 @@ public abstract class ConcurrentFilter extends Filter {
 	}
 	
 	public void process(){
-		while (!input.isEmpty()){
+		while (!input.isEmpty() || /*if its interrupted*/){
 			String line = input.poll();
 			String processedLine = processLine(line);
 			if (processedLine != null){
@@ -46,9 +46,11 @@ public abstract class ConcurrentFilter extends Filter {
 	
 	@Override
 	public boolean isDone() {
-		return input.size() == 0;
+		return input.size() == 0 ;
 	}
 	
 	protected abstract String processLine(String line);
-	
+	public void run(){
+		
+	}
 }

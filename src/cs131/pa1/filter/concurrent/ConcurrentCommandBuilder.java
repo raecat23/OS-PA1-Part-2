@@ -31,6 +31,10 @@ public class ConcurrentCommandBuilder {
 				job.add(filter);
 				ConcurrentREPL.processes.offer(filter);
 			} else {
+				if(commands[i].substring(0, 3).equals("kill")){
+					ConcurrentREPL.processes.remove((commands[i].substring(4)));
+					
+				}
 				return false;
 			}
 		}
@@ -54,16 +58,23 @@ public class ConcurrentCommandBuilder {
 		
 	
 	private static ConcurrentFilter determineFinalFilter(String command){
+		
 		String[] redir = command.split(">");
+		//String[] redir2 = command.split("&");
 		if(redir.length == 1) {
 			return new PrintFilter();
-		} else {
+		}
+		else {
 			try{
 				return new RedirectFilter("> " + redir[1]);
 			} catch (Exception e) {
 				return null;
 			}
 		}
+		//if(redir2.length == 1){
+			//there's something to do here;
+		//}
+		//return null;
 	}
 	
 	private static String adjustCommandToRemoveFinalFilter(String command){
@@ -117,6 +128,11 @@ public class ConcurrentCommandBuilder {
 				case "uniq":
 					filter = new UniqFilter();
 					break;
+				case ">":
+					filter = new RedirectFilter(subCommand);
+					break;
+				case "kill":
+					return null;
 				default:
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCommand);
 					return null;

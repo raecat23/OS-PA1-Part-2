@@ -66,4 +66,10 @@ public class CatFilter extends ConcurrentFilter{
 	public String toString() {
 		return "cat "+fileName;
 	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 }

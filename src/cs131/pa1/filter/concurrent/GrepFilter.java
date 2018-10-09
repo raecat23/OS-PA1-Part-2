@@ -46,4 +46,10 @@ public class GrepFilter extends ConcurrentFilter {
 	public String toString() {
 		return "grep "+toFind;
 	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 }
