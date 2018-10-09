@@ -3,8 +3,9 @@ package cs131.pa1.filter.concurrent;
 public class PrintFilter extends ConcurrentFilter {
 	boolean isDone;
 	int i;
-	public PrintFilter() {
-		super();
+	
+	public PrintFilter(int jobNum) {
+		super(jobNum);
 		i = 0;
 	}
 	

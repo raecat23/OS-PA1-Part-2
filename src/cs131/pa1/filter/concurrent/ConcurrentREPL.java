@@ -7,13 +7,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ConcurrentREPL {
 
 	static String currentWorkingDirectory;
-	static LinkedBlockingQueue<ConcurrentFilter> processes;
-	static List<List<ConcurrentFilter>> jobs;
+	static List<ConcurrentFilter> processes;
+	static int jobs;
 	
 	public static void main(String[] args){
-		jobs = new LinkedList<>();
+		jobs = 0;
+		processes = new LinkedList<>();
 		currentWorkingDirectory = System.getProperty("user.dir");
-		processes = new LinkedBlockingQueue<>();
 		Scanner s = new Scanner(System.in);
 		System.out.print(Message.WELCOME);
 		
@@ -33,10 +33,14 @@ public class ConcurrentREPL {
 					}else if(temp[0].equals("kill")) {
 						kill(Integer.parseInt(temp[1]));
 					}else {
-						ConcurrentCommandBuilder.createFiltersFromCommand(command.trim().substring(0, command.length()-1));
+						if(ConcurrentCommandBuilder.createFiltersFromCommand(command.trim().substring(0, command.length()-1), jobs)) {
+							jobs++;
+						}
 					}	
 				}else {
-					ConcurrentCommandBuilder.createFiltersFromCommand(command);
+					if(ConcurrentCommandBuilder.createFiltersFromCommand(command, jobs)) {
+						jobs++;
+					}
 				}
 				
 			}
@@ -57,31 +61,41 @@ public class ConcurrentREPL {
 	}
 	
 	private static void replJobs() {
-		for(int i = 0; i < jobs.size(); i++) {//Starts the new line for each "job" list 
+		List<ConcurrentFilter> temp = processes;
+		for(int i = 0; i < jobs; i++) {//Starts the new line for each "job" list 
 			System.out.print(i+1 + ". ");
-			for(int j = 0; j < jobs.get(i).size(); j++) { //Prints each of the jobs (overwrote the toString for filters to print)
-				System.out.print(jobs.get(i).get(j).toString()+" ");
-				if(j == jobs.get(i).size()-1) {
-					System.out.print("&");//we know it's an & at the end becaues repl jobs was called
-				}else {
-					System.out.print("| ");
+			for(ConcurrentFilter curr : temp) {
+				if(curr.jobNum == i) {
+					System.out.print(curr.toString() + " ");
+					if(curr.getNext() != null && !(curr.getNext() instanceof PrintFilter)) {
+						System.out.print("| ");
+					}else {
+						System.out.print("&\n");
+					}
+					temp.remove(curr);
 				}
 			}
-			System.out.println();
+		}
+	}
+	
+	public static void runNewJobs(List<ConcurrentFilter> jobs) {
+		for(ConcurrentFilter job : jobs) {
+			job.run();
 		}
 	}
 	
 	private static void kill(int kill) {
-		if(kill <= jobs.size()) {
-			kill--;//Because we need an index it must be decremented
-			List<ConcurrentFilter> killJob = jobs.get(kill);
-			int size = processes.size();
-			for(int i = 0; i < size; i++) {
-				ConcurrentFilter curr = processes.poll();
-				if(!killJob.contains(curr)) {
-					processes.offer(curr);
+		kill--;
+		if(kill <= jobs) {
+			for(ConcurrentFilter curr : processes) {
+				if(curr.jobNum == kill) {
+					curr.setDone();
+					processes.remove(curr);
+				}else if(curr.jobNum > kill) {
+					curr.jobNum--;
 				}
 			}
+			jobs--;			
 		}else {
 			System.out.printf(Message.INVALID_PARAMETER.toString(), "kill "+kill);
 		}

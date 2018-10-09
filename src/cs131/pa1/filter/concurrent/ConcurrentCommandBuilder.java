@@ -7,7 +7,7 @@ import cs131.pa1.filter.Message;
 
 public class ConcurrentCommandBuilder {
 	
-	public static boolean createFiltersFromCommand(String command) {
+	public static boolean createFiltersFromCommand(String command, int jobNum) {
 		//adding whitespace so that string splitting doesn't bug
 		command = " " + command + " ";
 		
@@ -24,14 +24,16 @@ public class ConcurrentCommandBuilder {
 		String[] commands = truncCommand.split("\\|");
 				
 		for(int i = 0; i < commands.length; i++) {
-			ConcurrentFilter filter = constructFilterFromSubCommand(commands[i].trim());
+			ConcurrentFilter filter = constructFilterFromSubCommand(commands[i].trim(), jobNum);
 					
 			if(filter != null) {
 				job.add(filter);
-			} 
+			} else {
+				return false;
+			}
 		}
 		
-		ConcurrentFilter fin = determineFinalFilter(command);
+		ConcurrentFilter fin = determineFinalFilter(command, jobNum);
 		if(fin == null) {
 			return false;
 		}
@@ -39,8 +41,9 @@ public class ConcurrentCommandBuilder {
 		job.add(fin);
 		
 		if(linkFilters(job, command) == true ){
-			ConcurrentREPL.jobs.add(job);
-			//Adds job list to the array of job lists that are currently running
+			ConcurrentREPL.processes.addAll(job);
+			ConcurrentREPL.runNewJobs(job);
+			//Adds job list to the list of jobs that are currently running
 			return true;
 		} else {
 			return false;
@@ -48,15 +51,15 @@ public class ConcurrentCommandBuilder {
 	}
 		
 	
-	private static ConcurrentFilter determineFinalFilter(String command){
+	private static ConcurrentFilter determineFinalFilter(String command, int jobNum){
 		
 		String[] redir = command.split(">");
 		if(redir.length == 1) {
-			return new PrintFilter();
+			return new PrintFilter(jobNum);
 		}
 		else {
 			try{
-				return new RedirectFilter("> " + redir[1]);
+				return new RedirectFilter("> " + redir[1], jobNum);
 			} catch (Exception e) {
 				return null;
 			}
@@ -87,38 +90,36 @@ public class ConcurrentCommandBuilder {
 		return removeRedir[0];
 	}
 	
-	private static ConcurrentFilter constructFilterFromSubCommand(String subCommand){
+	private static ConcurrentFilter constructFilterFromSubCommand(String subCommand, int jobNum){
 		String[] commandextract = subCommand.split(" ");
 		ConcurrentFilter filter;
 				
 		try {
 			switch (commandextract[0]) {
 				case "cat":
-					filter = new CatFilter(subCommand);
+					filter = new CatFilter(subCommand, jobNum);
 					break;
 				case "cd":
-					filter = new CdFilter(subCommand);
+					filter = new CdFilter(subCommand, jobNum);
 					break;
 				case "ls":
-					filter = new LsFilter();
+					filter = new LsFilter(jobNum);
 					break;
 				case "pwd":
-					filter = new PwdFilter();
+					filter = new PwdFilter(jobNum);
 					break;
 				case "grep":
-					filter = new GrepFilter(subCommand);
+					filter = new GrepFilter(subCommand, jobNum);
 					break;
 				case "wc":
-					filter = new WcFilter();
+					filter = new WcFilter(jobNum);
 					break;
 				case "uniq":
-					filter = new UniqFilter();
+					filter = new UniqFilter(jobNum);
 					break;
 				case ">":
-					filter = new RedirectFilter(subCommand);
+					filter = new RedirectFilter(subCommand, jobNum);
 					break;
-				case "kill":
-					return null;
 				default:
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCommand);
 					return null;

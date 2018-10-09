@@ -11,8 +11,8 @@ public class RedirectFilter extends ConcurrentFilter {
 	private FileWriter fw;
 	private String line;
 	
-	public RedirectFilter(String line) throws Exception {
-		super();
+	public RedirectFilter(String line, int jobNum) throws Exception {
+		super(jobNum);
 		String[] param = line.split(">");
 		
 		if(param.length > 1) {

@@ -5,8 +5,8 @@ import cs131.pa1.filter.Message;
 public class GrepFilter extends ConcurrentFilter {
 	private String toFind;
 	
-	public GrepFilter(String line) throws Exception {
-		super();
+	public GrepFilter(String line, int jobNum) throws Exception {
+		super(jobNum);
 		String[] param = line.split(" ");
 		if(param.length > 1) {
 			toFind = param[1];

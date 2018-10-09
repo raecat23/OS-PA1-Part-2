@@ -8,8 +8,8 @@ import cs131.pa1.filter.Message;
 public class CdFilter extends ConcurrentFilter{
 	private String dirToSet;
 	
-	public CdFilter(String line) throws Exception {
-		super();
+	public CdFilter(String line, int jobNum) throws Exception {
+		super(jobNum);
 		dirToSet = ConcurrentREPL.currentWorkingDirectory;
 		String[] args = line.trim().split(" ");
 		if(args.length == 1) {

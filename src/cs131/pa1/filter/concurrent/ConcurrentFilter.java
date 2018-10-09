@@ -11,9 +11,13 @@ public abstract class ConcurrentFilter extends Filter implements Runnable{
 	protected LinkedBlockingQueue<String> input;
 	protected LinkedBlockingQueue<String> output;
 	protected boolean isDone;
+	public int jobNum;
 	
-	public ConcurrentFilter() {
+	public ConcurrentFilter(int job) {
+		input = new LinkedBlockingQueue<>();
+		output = new LinkedBlockingQueue<>();
 		isDone = false;
+		this.jobNum = job;
 	}
 	
 	@Override
@@ -41,7 +45,7 @@ public abstract class ConcurrentFilter extends Filter implements Runnable{
 	}
 	
 	public void process(){
-		while (!this.prev.isDone() && !isDone()){
+		while (!this.prev.isDone() || !this.input.isEmpty() ){
 			String line;
 			try {
 				line = input.take();
@@ -51,6 +55,7 @@ public abstract class ConcurrentFilter extends Filter implements Runnable{
 				}
 			} catch (InterruptedException e) {
 				//Shouldn't happen
+				break;
 			}
 			
 		}
@@ -62,6 +67,10 @@ public abstract class ConcurrentFilter extends Filter implements Runnable{
 	@Override
 	public boolean isDone() {
 		return isDone;
+	}
+	
+	public void setDone() {
+		isDone = true;
 	}
 	
 	protected abstract String processLine(String line);

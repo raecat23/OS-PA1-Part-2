@@ -10,8 +10,8 @@ public class CatFilter extends ConcurrentFilter{
 	private Scanner reader;
 	private String fileName;
 	
-	public CatFilter(String line) throws Exception {
-		super();
+	public CatFilter(String line, int jobNum) throws Exception {
+		super(jobNum);
 		
 		//parsing the cat options
 		String[] args = line.split(" ");
@@ -36,16 +36,16 @@ public class CatFilter extends ConcurrentFilter{
 	}
 
 	public void process() {
-		if(reader.hasNext() && !isDone()) {
+		while(reader.hasNext() && !isDone()) {
 			String processedLine = processLine("");
 			if(processedLine != null) {
 				output.offer(processedLine);
 			}
 		
-		}else {
-			reader.close();
-			isDone = true;
 		}
+		reader.close();
+		isDone = true;
+		
 	}
 
 	public String processLine(String line) {

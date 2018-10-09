@@ -7,8 +7,8 @@ public class UniqFilter extends ConcurrentFilter{
 	//This set will record what strings are existing
 	
 	
-	public UniqFilter () throws Exception {
-		super();
+	public UniqFilter (int jobNum) throws Exception {
+		super(jobNum);
 		existingStringSet = new HashSet<String> ();
 	}
 

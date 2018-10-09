@@ -5,12 +5,31 @@ public class WcFilter extends ConcurrentFilter {
 	private int wordcount;
 	private int charcount;
 	
-	public WcFilter() {
-		super();
+	public WcFilter(int jobNum) {
+		super(jobNum);
 	}
 	
 	public void process() {
-		super.process();
+		while (!this.prev.isDone() || !this.input.isEmpty() ){
+			String line;
+			try {
+				line = input.take();
+				if(input.isEmpty() && this.prev.isDone()) {
+					isDone = true;
+				}
+				String processedLine = processLine(line);
+				if (processedLine != null){
+					output.offer(processedLine);
+				}
+			} catch (InterruptedException e) {
+				//Shouldn't happen
+				break;
+			}
+			
+		}
+		if(this.prev.isDone()) {
+			isDone = true;
+		}
 	}
 	
 	public String processLine(String line) {
