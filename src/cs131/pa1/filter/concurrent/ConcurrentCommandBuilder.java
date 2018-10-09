@@ -120,14 +120,6 @@ public class ConcurrentCommandBuilder {
 				case ">":
 					filter = new RedirectFilter(subCommand, jobNum);
 					break;
-				/*case "repl_jobs":
-					ConcurrentREPL.replJobs();
-					filter = null;
-					break;
-				case "kill":
-					ConcurrentREPL.kill(subCommand);
-					filter = null;
-					break;*/
 				default:
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCommand);
 					return null;

@@ -39,15 +39,10 @@ public class ConcurrentREPL {
 						}
 					}	
 				}else {
-					if(temp[0].equals("repl_jobs")) {
-						replJobs();
-					}else if(temp[0].equals("kill")) {
-						kill(command);
-					}else {
 						if(ConcurrentCommandBuilder.createFiltersFromCommand(command, jobs)) {
 							jobs++;
 						}
-					}
+					
 				}
 				
 			}
